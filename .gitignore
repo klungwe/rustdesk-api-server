@@ -16,6 +16,9 @@ test
 *.bat
 server.ico
 start.py
+env/
+.env
+rustdesk_server_api/settings.py
 
 # Build
 build

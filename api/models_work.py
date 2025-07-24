@@ -19,7 +19,7 @@ class RustDeskToken(models.Model):
         verbose_name_plural = _("Token列表") 
 
 class ConnLog(models.Model):
-    id = models.IntegerField(verbose_name=_('ID'),primary_key=True)
+    id = models.AutoField(verbose_name=_('ID'),primary_key=True)
     action = models.CharField(verbose_name=_('Action'), max_length=20, null=True)
     conn_id = models.CharField(verbose_name=_('Connection ID'), max_length=10, null=True)
     from_ip = models.CharField(verbose_name=_('From IP'), max_length=30, null=True)
@@ -85,7 +85,7 @@ class RustDeskPeer(models.Model):
     platform = models.CharField(verbose_name=_('平台'), max_length=30, blank=True)
     tags = models.CharField(verbose_name=_('标签'), max_length=30, blank=True)
     rhash = models.CharField(verbose_name=_('设备链接密码'), max_length=60, blank=True)
-    ip = models.CharField(verbose_name=_('IP Address'), max_length=16, default="", blank=True)
+    ip = models.CharField(verbose_name=_('IP Address'), max_length=16, default="", null=True, blank=True)
     
     class Meta:
         ordering = ('-username',)
@@ -110,7 +110,7 @@ class RustDesDevice(models.Model):
     version = models.CharField(verbose_name=_('客户端版本'), max_length=100)
     create_time = models.DateTimeField(verbose_name=_('设备注册时间'), auto_now_add=True)
     update_time = models.DateTimeField(verbose_name=('设备更新时间'), auto_now=True, blank=True)
-    ip = models.CharField(verbose_name=_('IP Address'), max_length=16, default="")
+    ip = models.CharField(verbose_name=_('IP Address'), max_length=16, null=True, blank=True)
     
     class Meta:
         ordering = ('-rid',)
@@ -146,7 +146,7 @@ class ShareLinkAdmin(admin.ModelAdmin):
     list_filter = ('is_used', 'uid', 'is_expired' )
 
 class GithubRun(models.Model):
-    id = models.IntegerField(verbose_name="ID",primary_key=True)
+    id = models.AutoField(verbose_name="ID", primary_key=True)
     uuid = models.CharField(verbose_name="uuid", max_length=100)
     status = models.CharField(verbose_name="status", max_length=100)
     name = models.CharField(verbose_name="name", max_length=100, default="")

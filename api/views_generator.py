@@ -210,7 +210,7 @@ def generator_view(request):
                     "filename":filename
                 }
             } 
-            #print(data)
+            print(data)
             headers = {
                 'Accept':  'application/vnd.github+json',
                 'Content-Type': 'application/json',
@@ -219,6 +219,8 @@ def generator_view(request):
             }
             create_github_run(myuuid,filename,platform)
             response = requests.post(url, json=data, headers=headers)
+            print(url)
+            print(headers)
             print(response)
             if response.status_code == 204:
                 #return render(request, 'waiting.html', {'filename':filename, 'uuid':myuuid, 'status':"Starting generator...please wait", 'phone_or_desktop': is_mobile(request), 'platform':platform})

@@ -12,7 +12,7 @@ from django.forms.models import model_to_dict
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.conf import settings
-
+from django.utils import timezone
 from itertools import chain
 from django.db.models.fields import DateTimeField, DateField, CharField, TextField
 import datetime
@@ -209,7 +209,7 @@ def get_single_info(uid):
         peers[rid]['has_rhash'] = _('yes') if len(peers[rid]['rhash'])>1 else _('no')
         peers[rid]['status'] = _('X')
 
-    now = datetime.datetime.now()
+    now = timezone.now()
     for rid, device in devices.items():
         peers[rid]['create_time'] = device.create_time.strftime('%Y-%m-%d')
         peers[rid]['update_time'] = device.update_time.strftime('%Y-%m-%d %H:%M')
@@ -218,7 +218,7 @@ def get_single_info(uid):
         peers[rid]['cpu'] = device.cpu
         peers[rid]['os'] = device.os
         peers[rid]['ip'] = device.ip
-        if (now-device.update_time).seconds <=120:
+        if (now - device.update_time).total_seconds() <= 120:
             peers[rid]['status'] = _('Online')
             online_count += 1
         else:

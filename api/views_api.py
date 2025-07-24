@@ -12,7 +12,7 @@ from django.db.models import Q
 import copy
 from .views_front import *
 from django.utils.translation import gettext as _
-
+from django.utils import timezone
 
 def login(request):
     result = {}
@@ -215,6 +215,7 @@ def sysinfo(request):
     
     client_ip = get_client_ip(request)
     postdata = json.loads(request.body)
+
     device = RustDesDevice.objects.filter(Q(rid=postdata['id']) & Q(uuid=postdata['uuid']) ).first()
     if not device:
         device = RustDesDevice(
@@ -244,7 +245,7 @@ def heartbeat(request):
     if device:
         device.save()
     # token保活
-    create_time = datetime.datetime.now() + datetime.timedelta(seconds=EFFECTIVE_SECONDS)
+    create_time = timezone.now() + datetime.timedelta(seconds=EFFECTIVE_SECONDS)
     RustDeskToken.objects.filter(Q(rid=postdata['id']) & Q(uuid=postdata['uuid']) ).update(create_time=create_time)
     result = {}
     result['data'] = _('在线')

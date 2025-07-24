@@ -11,50 +11,41 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-if "CSRF_TRUSTED_ORIGINS" in os.environ:
-    CSRF_TRUSTED_ORIGINS = [os.environ["CSRF_TRUSTED_ORIGINS"]]
-else:
-    CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:21114"]
-    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'None'
+#load_dotenv(os.path.join(BASE_DIR, '../.env'))
+load_dotenv()
+
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://rmi.mikaexpress.com').split(',')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", 'j%7yjvygpih=6b%qf!q%&ixpn+27dngzdu-i3xh-^3xgy3^nnc')
+SECRET_KEY = '6^k@+jptk#l8(@79o7a)nbmsf8!g7mdnt&uy9abo1pt+_+j82q'
 # ID服务器IP或域名，一般与中继服务器，用于web client
-ID_SERVER = os.environ.get("ID_SERVER", '')
+ID_SERVER = os.getenv("ID_SERVER", 'rmi.mikaexpress.com')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", False)
+DEBUG = False
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'rmi.mikaexpress.com,localhost,127.0.0.1').split(',')
 AUTH_USER_MODEL = 'api.UserProfile'      # AppName.自定义user
 
-ALLOW_REGISTRATION = os.environ.get("ALLOW_REGISTRATION", "True")          # 是否允许注册, True为允许，False为不允许
-ALLOW_REGISTRATION = True if ALLOW_REGISTRATION.lower() == 'true' else False
+ALLOW_REGISTRATION = False          # 是否允许注册, True为允许，False为不允许
 
 GHUSER = os.environ.get("GHUSER", '')
-GHBEARER = os.environ.get("GHBEARER", '')
-GENURL = os.environ.get("GENURL", '')
-PROTOCOL = os.environ.get("PROTOCOL", 'https')
-REPONAME = os.environ.get("REPONAME", 'rdgen')
+GHBEARER = os.getenv("GHBEARER", '')
+GENURL = os.getenv("GENURL", '')
+PROTOCOL = os.getenv("PROTOCOL", 'https')
+REPONAME = os.getenv("REPONAME", 'rdgen')
 
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 
-# ==========数据库配置 开始=====================
-DATABASE_TYPE = os.environ.get("DATABASE_TYPE", 'SQLITE')
-MYSQL_DBNAME = os.environ.get("MYSQL_DBNAME", '-')
-MYSQL_HOST = os.environ.get("MYSQL_HOST", '127.0.0.1')
-MYSQL_USER = os.environ.get("MYSQL_USER", '-')
-MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD", '-')
-MYSQL_PORT = os.environ.get("MYSQL_PORT", '3306')
-# ==========数据库配置 结束=====================
 
-LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", 'zh-hans')
-# #LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", 'en')
+#LANGUAGE_CODE = os.environ.get("LANGUAGE_CODE", 'zh-hans')
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", 'en')
 
 # Application definition
 
@@ -105,26 +96,17 @@ WSGI_APPLICATION = 'rustdesk_server_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db/db.sqlite3',
-    },
-}
-if DATABASE_TYPE == 'MYSQL' and MYSQL_DBNAME != '-' and MYSQL_USER != '-' and MYSQL_PASSWORD != '-':
-    # 简单通过数据库名、账密信息过滤下，防止用户未配置mysql却使用mysql
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': MYSQL_DBNAME,               # 数据库名
-            'HOST': MYSQL_HOST,                 # 数据库服务器IP
-            'USER': MYSQL_USER,                 # 数据库用户名
-            'PASSWORD': MYSQL_PASSWORD,         # 数据库密码
-            'PORT': MYSQL_PORT,                 # 端口
-            'OPTIONS': {'charset': 'utf8'},
-        }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DATABASE_NAME', 'rustdesk_api'),
+        'USER': os.getenv('DATABASE_USER', 'rustdesk_user'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'RustDesk2025!'),
+        'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+        'PORT': os.getenv('DATABASE_PORT', '3306'),
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -150,14 +132,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en'
 
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_L10N = True
 
-# USE_TZ = True
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
